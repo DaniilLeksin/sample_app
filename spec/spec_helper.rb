@@ -45,6 +45,8 @@ Spork.prefork do
     #     --seed 1234
     config.order = "random"
     config.include Capybara::DSL
+    # fix from http://stackoverflow.com/questions/12240868/undefined-local-variable-or-method-root-path-hartls-tutorial-chapter-5-3-2
+    config.include Rails.application.routes.url_helpers
   end
 end
 
