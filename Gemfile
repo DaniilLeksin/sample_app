@@ -6,8 +6,9 @@ ruby '2.1.5'
 gem 'rails', '4.1.8'
 # Add bootstrap
 gem 'bootstrap-sass', '2.3.2.0'
-# Add bcrypt to hash pswd
-gem 'bcrypt-ruby', '3.1.2'
+# Add bcrypt to hash pswd also, hange to 3.1.5 to fix err gem not installed
+# http://stackoverflow.com/questions/22708965/you-dont-have-bcrypt-ruby-installed-in-your-application-but-in-my-opinion-i
+gem 'bcrypt-ruby', '3.1.5'
 # Use sqlite3 as the database for Active Record
 #gem 'sqlite3'
 group :development, :test do
