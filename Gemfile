@@ -25,9 +25,11 @@ group :test do
   gem 'capybara', '2.2.0'
   # Windows: раскомментируйте эти строки.
   gem 'rb-notifu', '0.0.4'
-  gem 'win32console', '1.3.2'
+  #gem 'win32console', '1.3.2'
   gem 'wdm', '0.1.0'
   gem 'factory_girl_rails', '4.2.1'
+  gem 'cucumber-rails', '1.4.0', :require => false
+  gem 'database_cleaner', github: 'bmabey/database_cleaner'  
 end
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
@@ -70,3 +72,10 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin]
 
+# http://stackoverflow.com/questions/28014000/undefined-method-its-for-rspec-hartls-ruby-on-rails-tutorial
+gem 'rspec-its'
+
+# http://stackoverflow.com/questions/27310020/rails-console-require-cannot-load-such-file
+gem 'rb-readline'
+
+gem 'minitest'
