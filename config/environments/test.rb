@@ -39,4 +39,8 @@ Rails.application.configure do
 
   # Speed up tests by lowering bcrypt's cost function.
   ActiveModel::SecurePassword.min_cost = true
+
+  # Default Mailer Host
+  # http://stackoverflow.com/questions/22288951/actionviewtemplateerror-missing-host-to-link-to-please-provide-the-host-p
+  Rails.application.routes.default_url_options[:host] = 'www.example.com'
 end

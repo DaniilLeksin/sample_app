@@ -128,7 +128,9 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
-
+  # http://ru.stackoverflow.com/questions/459864/rails-4-rspec-undefined-method-patch
+  config.infer_spec_type_from_file_location!
   # Capybara atacks
   config.include Capybara::DSL
+  config.include Rails.application.routes.url_helpers
 end
