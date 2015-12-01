@@ -14,30 +14,28 @@ describe User do
   it { should respond_to(:password_digest) }
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
-  it { should respond_to(:authenticate) }
-
-  it { should respond_to(:password_confirmation) }
   it { should respond_to(:remember_token) }
-  it { should respond_to(:authenticate) }
-
-
-  it { should respond_to(:authenticate) }
   it { should respond_to(:admin) }
+  it { should respond_to(:authenticate) }
   it { should respond_to(:microposts) }
+  it { should respond_to(:feed) }
 
   it { should be_valid }
   it { should_not be_admin }
 
+  # describe "accessible attributes" do
+  #   it "should not allow access to admin" do
+  #     expect do
+  #       User.new(admin: "1")
+  #     end.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+  #   end
+  # end
+
   describe "with admin attribute set to 'true'" do
-    before do
-      @user.save!
-      @user.toggle!(:admin)
-    end
+    before { @user.toggle!(:admin) }
 
     it { should be_admin }
   end
-
-  it { should be_valid }
 
   describe "when name is not present" do
     before { @user.name = " " }
@@ -49,18 +47,18 @@ describe User do
     it { should_not be_valid }
   end
 
-  describe "when the name is too long" do
-  	before { @user.name = "a" * 51 }
-  	it { should_not be_valid }
+  describe "when name is too long" do
+    before { @user.name = "a" * 51 }
+    it { should_not be_valid }
   end
 
   describe "when email format is invalid" do
-  	it "should be invalid" do
-  	  adresses = %w[user@foo,com user_at_foo.org example.user@foo.
+    it "should be invalid" do
+      addresses = %w[user@foo,com user_at_foo.org example.user@foo.
                      foo@bar_baz.com foo@bar+baz.com]
-      adresses.each do |invalid_adress|
-      	@user.email = invalid_adress
-      	expect(@user).not_to be_valid
+      addresses.each do |invalid_address|
+        @user.email = invalid_address
+        @user.should_not be_valid
       end
     end
   end
@@ -70,43 +68,86 @@ describe User do
       addresses = %w[user@foo.COM A_US-ER@f.b.org frst.lst@foo.jp a+b@baz.cn]
       addresses.each do |valid_address|
         @user.email = valid_address
-        expect(@user).to be_valid
+        @user.should be_valid
       end
     end
   end
 
-  describe "When password is not present" do
-  	before { @user.password = @user.password_confirmation = " " }
-  	it { should_not be_valid }
+  describe "when email address is already taken" do
+    before do
+      user_with_same_email = @user.dup
+      user_with_same_email.email = @user.email.upcase
+      user_with_same_email.save
+    end
+
+    it { should_not be_valid }
   end
 
-  describe "When password doesn't match confirmation" do
-  	before { @user.password_confirmation = "mismatch" }
-  	it { should_not be_valid }
+  # describe "when password is not present" do
+  #   before { @user.password = @user.password_confirmation = " " }
+  #   it { should_not be_valid }
+  # end
+  describe "when password is not present" do
+    before do
+      @user = User.new(name: "Example User", email: "user@example.com",
+                       password: " ", password_confirmation: " ")
+    end
+    it { should_not be_valid }
   end
 
-  describe "with a password that's too short" do
+  describe "when password doesn't match confirmation" do
+    before { @user.password_confirmation = "mismatch" }
+    it { should_not be_valid }
+  end
+
+  # TODO: find the solution
+  #   1) User when password confirmation is nil should not be valid
+  #   
+  #  Failure/Error: it { should_not be_valid } expected 
+  # `#<User id: nil, name: "Example User", email: "user@example.com"
+  # , created_at: nil, updated_at: nil, password_digest: "$2a$04$iGh2Cj/AfIYjcVIoRNl
+  # Rv.penI5ZHpUztQbbkhdUUyP...", remember_token: nil, admin: false>.valid?` to retu
+  # rn false, got true
+  #      # ./spec/models/user_spec.rb:109:in `block (3 levels) in <top (required)>'
+
+  # describe "when password confirmation is nil" do
+  #   before { @user.password_confirmation = nil }
+  #   # before do
+  #   #   @user = User.new(name: "Example User", email: "user@example.com",
+  #   #                    password: "foobar", password_confirmation: nil)
+  #   # end
+  #   it { should_not be_valid }
+  # end
+
+  describe "when password is too short" do
     before { @user.password = @user.password_confirmation = "a" * 5 }
-    it { should be_invalid }
+    it { should_not be_valid }
   end
 
   describe "return value of authenticate method" do
     before { @user.save }
-    let(:found_user) { User.find_by(email: @user.email) }
+    let(:found_user) { User.find_by_email(@user.email) }
 
     describe "with valid password" do
-      it { should eq found_user.authenticate(@user.password) }
+      it { should == found_user.authenticate(@user.password) }
+    end
+
+    describe "with invalid password" do
+      let(:user_for_invalid_password) { found_user.authenticate("invalid") }
+
+      it { should_not == user_for_invalid_password }
+      # http://stackoverflow.com/questions/23937758/rspec-failing-error-expected-false-to-respond-to-false
+      specify { user_for_invalid_password.should be_falsey }
     end
   end
 
   describe "remember token" do
     before { @user.save }
-    # expect(subject.remember_token).not_to be_blank
-    it { expect(@user.remember_token).not_to be_blank }
+    its(:remember_token) { should_not be_blank }
   end
 
   describe "micropost associations" do
-
+    
     before { @user.save }
     let!(:older_micropost) do
       FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
@@ -116,15 +157,14 @@ describe User do
     end
 
     it "should have the right microposts in the right order" do
-      expect(@user.microposts.to_a).to eq [newer_micropost, older_micropost]
+      @user.microposts.should == [newer_micropost, older_micropost]
     end
 
     it "should destroy associated microposts" do
-      microposts = @user.microposts.to_a
+      microposts = @user.microposts
       @user.destroy
-      expect(microposts).not_to be_empty
       microposts.each do |micropost|
-        expect(Micropost.where(id: micropost.id)).to be_empty
+        Micropost.find_by_id(micropost.id).should be_nil
       end
     end
   end
