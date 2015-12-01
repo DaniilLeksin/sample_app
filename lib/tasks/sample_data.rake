@@ -19,5 +19,11 @@ namespace :db do
                    password: password,
                    password_confirmation: password)
     end
+    # http://stackoverflow.com/questions/23749612/wrong-number-of-arguments-1-for-0-hartl-chapter-10-bundle-exec-rake-dbpopul
+    users = User.all.limit(6)
+    50.times do
+      content = Faker::Lorem.sentence(5)
+      users.each { |user| user.microposts.create!(content: content) }
+    end
   end
 end
