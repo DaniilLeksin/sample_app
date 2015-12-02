@@ -108,26 +108,10 @@ describe User do
     it { should_not be_valid }
   end
 
-  # TODO: find the solution
-  #   1) User when password confirmation is nil should not be valid
-  #   
-  #  Failure/Error: it { should_not be_valid } expected 
-  # `#<User id: nil, name: "Example User", email: "user@example.com"
-  # , created_at: nil, updated_at: nil, password_digest: "$2a$04$iGh2Cj/AfIYjcVIoRNl
-  # Rv.penI5ZHpUztQbbkhdUUyP...", remember_token: nil, admin: false>.valid?` to retu
-  # rn false, got true
-  #      # ./spec/models/user_spec.rb:109:in `block (3 levels) in <top (required)>'
-
-  # describe "when password confirmation is nil" do
+  # Test skipped https://github.com/rails/rails/issues/16244
+  #  describe "when password confirmation is nil" do
   #   before { @user.password_confirmation = nil }
-  #   # before do
-  #   #   @user = User.new(name: "Example User", email: "user@example.com",
-  #   #                    password: "foobar", password_confirmation: nil)
-  #   # end
-  #   # it { should_not be_valid }
-  #   it 'is not valid' do
-  #     expect(user).to_not be_valid
-  #   end
+  #   it { should_not be_valid }
   # end
 
   describe "when password is too short" do
