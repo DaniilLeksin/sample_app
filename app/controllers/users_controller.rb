@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   # see + :index http://stackoverflow.com/questions/14992553/my-test-at-the-end-of-9-3-1-is-showing-1-failure-in-the-authentication-page
-  before_action :signed_in_user,  only: [:index, :edit, :update]
+  before_action :signed_in_user,  only: [:index, :edit, :update, :destroy, :following, :followers]
   before_action :correct_user,    only: [:edit, :update]
   before_action :admin_user,      only: :destroy
 
@@ -45,6 +45,20 @@ class UsersController < ApplicationController
     User.find(params[:id]).destroy
     flash[:success] = "User deleted."
     redirect_to users_url
+  end
+
+  def following
+    @title = "Following"
+    @user = User.find(params[:id])
+    @users = @user.followed_users.paginate(page: params[:page])
+    render 'show_follow'
+  end
+
+  def followers
+    @title = "Followers"
+    @user = User.find(params[:id])
+    @users = @user.followers.paginate(page: params[:page])
+    render 'show_follow'
   end
 
   private
