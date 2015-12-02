@@ -83,10 +83,11 @@ describe User do
     it { should_not be_valid }
   end
 
-  # describe "when password is not present" do
-  #   before { @user.password = @user.password_confirmation = " " }
-  #   it { should_not be_valid }
-  # end
+  describe "when password is not present" do
+    before { @user.password = @user.password_confirmation = " " }
+    it { should_not be_valid }
+  end
+
   describe "when password is not present" do
     before do
       @user = User.new(name: "Example User", email: "user@example.com",
@@ -110,14 +111,17 @@ describe User do
   # rn false, got true
   #      # ./spec/models/user_spec.rb:109:in `block (3 levels) in <top (required)>'
 
-  # describe "when password confirmation is nil" do
-  #   before { @user.password_confirmation = nil }
-  #   # before do
-  #   #   @user = User.new(name: "Example User", email: "user@example.com",
-  #   #                    password: "foobar", password_confirmation: nil)
-  #   # end
-  #   it { should_not be_valid }
-  # end
+  describe "when password confirmation is nil" do
+    before { @user.password_confirmation = nil }
+    # before do
+    #   @user = User.new(name: "Example User", email: "user@example.com",
+    #                    password: "foobar", password_confirmation: nil)
+    # end
+    # it { should_not be_valid }
+    it 'is not valid' do
+      expect(user).to_not be_valid
+    end
+  end
 
   describe "when password is too short" do
     before { @user.password = @user.password_confirmation = "a" * 5 }
